@@ -7,6 +7,7 @@ package org.cef.browser.mac;
 import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.peer.ComponentPeer;
+
 import sun.lwawt.LWComponentPeer;
 import sun.lwawt.PlatformWindow;
 import sun.lwawt.macosx.CPlatformWindow;
@@ -29,7 +30,7 @@ public class CefBrowserWindowMac implements CefBrowserWindow {
         @SuppressWarnings("rawtypes")
         PlatformWindow pWindow = ((LWComponentPeer) peer).getPlatformWindow();
         if (pWindow instanceof CPlatformWindow) {
-          result = ((CPlatformWindow)pWindow).getNSWindowPtr();
+          result = ((CPlatformWindow) pWindow).getNSWindowPtr();
           break;
         }
       }

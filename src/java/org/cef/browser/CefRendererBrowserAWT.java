@@ -21,29 +21,30 @@ import org.cef.handler.CefRenderHandler;
 
 /**
  * This class represents a windowed rendered browser.
- * The visibility of this class is "package". To create a new 
+ * The visibility of this class is "package". To create a new
  * CefBrowser instance, please use CefBrowserFactory.
  */
-class CefBrowserWr extends CefBrowser_N {
+class CefRendererBrowserAWT extends CefBrowser_N {
   private Canvas canvas_ = null;
   private long window_handle_ = 0;
   private CefClientHandler clientHandler_;
   private String url_;
   private CefRequestContext context_;
-  private CefBrowserWr parent_ = null;
-  private CefBrowserWr devTools_ = null;
+  private CefRendererBrowserAWT parent_ = null;
+  private CefRendererBrowserAWT devTools_ = null;
 
-  CefBrowserWr(CefClientHandler clientHandler,
-               String url,
-               CefRequestContext context) {
+  CefRendererBrowserAWT(CefClientHandler clientHandler,
+                        String url,
+                        Boolean isTransparent,
+                        CefRequestContext context) {
     this(clientHandler, url, context, null);
   }
 
   @SuppressWarnings("serial")
-  private CefBrowserWr(CefClientHandler clientHandler,
-                       String url,
-                       CefRequestContext context,
-                       CefBrowserWr parent) {
+  private CefRendererBrowserAWT(CefClientHandler clientHandler,
+                                String url,
+                                CefRequestContext context,
+                                CefRendererBrowserAWT parent) {
     super();
     clientHandler_ = clientHandler;
     url_ = url;
@@ -80,20 +81,20 @@ class CefBrowserWr extends CefBrowser_N {
 
       @Override
       public void paint(Graphics g) {
-        if (getNativeRef("CefBrowser") == 0 ) {
+        if (getNativeRef("CefBrowser") == 0) {
           if (parent_ != null) {
             createDevTools(parent_,
-                           clientHandler_,
-                           getWindowHandle(),
-                           false,
-                           canvas_);
+              clientHandler_,
+              getWindowHandle(),
+              false,
+              canvas_);
           } else {
             createBrowser(clientHandler_,
-                          getWindowHandle(),
-                          url_,
-                          false,
-                          canvas_,
-                          context_);
+              getWindowHandle(),
+              url_,
+              false,
+              canvas_,
+              context_);
           }
         }
       }
@@ -105,12 +106,12 @@ class CefBrowserWr extends CefBrowser_N {
       }
     };
     canvas_.setFocusable(true);
-    canvas_.addFocusListener( new FocusListener() {
+    canvas_.addFocusListener(new FocusListener() {
       @Override
       public void focusLost(FocusEvent e) {
         setFocus(false);
       }
-      
+
       @Override
       public void focusGained(FocusEvent e) {
         setFocus(true);
@@ -143,7 +144,7 @@ class CefBrowserWr extends CefBrowser_N {
   @Override
   public synchronized CefBrowser getDevTools() {
     if (devTools_ == null)
-      devTools_ = new CefBrowserWr(clientHandler_, url_, context_, this);
+      devTools_ = new CefRendererBrowserAWT(clientHandler_, url_, context_, this);
     return devTools_;
   }
 
@@ -151,7 +152,7 @@ class CefBrowserWr extends CefBrowser_N {
     if (window_handle_ == 0 && OS.isMacintosh()) {
       try {
         Class<?> cls = Class.forName("org.cef.browser.mac.CefBrowserWindowMac");
-        CefBrowserWindow browserWindow = (CefBrowserWindow)cls.newInstance();
+        CefBrowserWindow browserWindow = (CefBrowserWindow) cls.newInstance();
         if (browserWindow != null) {
           window_handle_ = browserWindow.getWindowHandleOfCanvas(canvas_);
         }

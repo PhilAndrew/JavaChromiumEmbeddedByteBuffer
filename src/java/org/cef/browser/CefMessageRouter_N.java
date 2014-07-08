@@ -87,12 +87,17 @@ class CefMessageRouter_N extends CefMessageRouter implements CefNative {
   }
 
   private final native void N_Create(CefMessageRouterConfig config);
+
   private final native void N_Dispose();
+
   private final native boolean N_AddHandler(CefMessageRouterHandler handler,
                                             boolean first);
+
   private final native boolean N_RemoveHandler(CefMessageRouterHandler handler);
+
   private final native void N_CancelPending(CefBrowser browser,
                                             CefMessageRouterHandler handler);
+
   private final native int N_GetPendingCount(CefBrowser browser,
                                              CefMessageRouterHandler handler);
 }

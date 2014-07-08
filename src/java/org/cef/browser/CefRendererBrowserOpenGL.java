@@ -31,11 +31,11 @@ import org.cef.handler.CefRenderHandler;
 
 /**
  * This class represents an off-screen rendered browser.
- * The visibility of this class is "package". To create a new 
+ * The visibility of this class is "package". To create a new
  * CefBrowser instance, please use CefBrowserFactory.
  */
-class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
-  private CefRenderer renderer_;
+class CefRendererBrowserOpenGL extends CefBrowser_N implements CefRenderHandler {
+  private CefRendererOpenGL renderer_;
   private GLCanvas canvas_;
   private long window_handle_ = 0;
   private Rectangle browser_rect_ = new Rectangle(0, 0, 0, 0);
@@ -43,24 +43,25 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
   private String url_;
   private boolean isTransparent_;
   private CefRequestContext context_;
-  private CefBrowserOsr parent_ = null;
-  private CefBrowserOsr devTools_ = null;;
+  private CefRendererBrowserOpenGL parent_ = null;
+  private CefRendererBrowserOpenGL devTools_ = null;
+  ;
 
-  CefBrowserOsr(CefClientHandler clientHandler,
-                String url,
-                boolean transparent,
-                CefRequestContext context) {
+  CefRendererBrowserOpenGL(CefClientHandler clientHandler,
+                           String url,
+                           boolean transparent,
+                           CefRequestContext context) {
     this(clientHandler, url, transparent, context, null);
   }
 
-  private CefBrowserOsr(CefClientHandler clientHandler,
-                        String url,
-                        boolean transparent,
-                        CefRequestContext context,
-                        CefBrowserOsr parent) {
+  private CefRendererBrowserOpenGL(CefClientHandler clientHandler,
+                                   String url,
+                                   boolean transparent,
+                                   CefRequestContext context,
+                                   CefRendererBrowserOpenGL parent) {
     super();
     isTransparent_ = transparent;
-    renderer_ = new CefRenderer(transparent);
+    renderer_ = new CefRendererOpenGL(transparent);
     clientHandler_ = clientHandler;
     url_ = url;
     context_ = context;
@@ -93,11 +94,11 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
   @Override
   public synchronized CefBrowser getDevTools() {
     if (devTools_ == null) {
-      devTools_ = new CefBrowserOsr(clientHandler_,
-                                    url_,
-                                    isTransparent_,
-                                    context_,
-                                    this);
+      devTools_ = new CefRendererBrowserOpenGL(clientHandler_,
+        url_,
+        isTransparent_,
+        context_,
+        this);
     }
     return devTools_;
   }
@@ -124,17 +125,17 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
       public void paint(Graphics g) {
         if (parent_ != null) {
           createDevTools(parent_,
-                         clientHandler_,
-                         getWindowHandle(),
-                         isTransparent_,
-                         null);
+            clientHandler_,
+            getWindowHandle(),
+            isTransparent_,
+            null);
         } else {
           createBrowser(clientHandler_,
-                        getWindowHandle(),
-                        url_,
-                        isTransparent_,
-                        null,
-                        context_);
+            getWindowHandle(),
+            url_,
+            isTransparent_,
+            null,
+            context_);
         }
         super.paint(g);
       }
@@ -245,7 +246,7 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
       Rectangle old_rect = renderer_.getPopupRect();
       renderer_.clearPopupRects();
       invalidate(old_rect);
-     }
+    }
   }
 
   @Override
@@ -254,11 +255,11 @@ class CefBrowserOsr extends CefBrowser_N implements CefRenderHandler {
   }
 
   @Override
-  public void onPaint(CefBrowser browser, 
+  public void onPaint(CefBrowser browser,
                       boolean popup,
-                      Rectangle[] dirtyRects, 
-                      ByteBuffer buffer, 
-                      int width, 
+                      Rectangle[] dirtyRects,
+                      ByteBuffer buffer,
+                      int width,
                       int height) {
     canvas_.getContext().makeCurrent();
     renderer_.onPaint(canvas_.getGL().getGL2(), popup, dirtyRects, buffer, width, height);

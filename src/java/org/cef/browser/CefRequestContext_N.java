@@ -59,7 +59,7 @@ class CefRequestContext_N extends CefRequestContext implements CefNative {
   public void dispose() {
     try {
       N_CefRequestContext_DTOR();
-    } catch(UnsatisfiedLinkError ule) {
+    } catch (UnsatisfiedLinkError ule) {
       ule.printStackTrace();
     }
   }
@@ -80,7 +80,10 @@ class CefRequestContext_N extends CefRequestContext implements CefNative {
   }
 
   private final static native CefRequestContext_N N_GetGlobalContext();
+
   private final static native CefRequestContext_N N_CreateContext(CefRequestContextHandler handler);
+
   private final native boolean N_IsGlobal();
+
   private final native void N_CefRequestContext_DTOR();
 }

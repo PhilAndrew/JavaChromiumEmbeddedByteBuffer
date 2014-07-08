@@ -19,6 +19,7 @@ import org.cef.CefApp;
 import org.cef.CefClient;
 import org.cef.OS;
 import org.cef.browser.CefBrowser;
+import org.cef.browser.CefBrowserFactory;
 import org.cef.browser.CefMessageRouter;
 import org.cef.browser.CefRequestContext;
 import org.cef.handler.CefDisplayHandlerAdapter;
@@ -217,8 +218,8 @@ public class MainFrame extends JFrame {
       cookieManager_ = CefCookieManager.getGlobalManager();
     }
     browser_ = client_.createBrowser("http://www.google.com",
-                                     osrEnabled,
                                      false,
+                                     CefBrowserFactory.RenderType.RENDER_AWT_WINDOW,
                                      requestContext);
 
     //    Last but not least we're setting up the UI for this example implementation.

@@ -15,10 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.cef.browser.CefBrowser;
-import org.cef.browser.CefBrowserFactory;
-import org.cef.browser.CefMessageRouter;
-import org.cef.browser.CefRequestContext;
+import org.cef.browser.*;
 import org.cef.callback.CefAllowCertificateErrorCallback;
 import org.cef.callback.CefAuthCallback;
 import org.cef.callback.CefBeforeDownloadCallback;
@@ -114,20 +111,27 @@ public class CefClient extends CefClientHandler implements CefContextMenuHandler
   // CefClientHandler
 
   public CefBrowser createBrowser(String url,
-                                  boolean isOffscreenRendered,
-                                  boolean isTransparent) {
-    return createBrowser(url, isOffscreenRendered, isTransparent, null);
+                                  boolean isTransparent,
+                                  CefBrowserFactory.RenderType renderType) {
+    return createBrowser(url, isTransparent, renderType, null, 0, 0, null);
+  }
+  public CefBrowser createBrowser(String url,
+                                  boolean isTransparent,
+                                  CefBrowserFactory.RenderType renderType,
+                                  CefRequestContext context) {
+    return createBrowser(url, isTransparent, renderType, context, 0, 0, null);
   }
 
   public CefBrowser createBrowser(String url,
-                                  boolean isOffscreenRendered,
                                   boolean isTransparent,
-                                  CefRequestContext context) {
+                                  CefBrowserFactory.RenderType renderType,
+                                  CefRequestContext context, int browserWidth, int browserHeight,
+                                  CefRenderer cefRenderer) {
     return CefBrowserFactory.create(this,
                                     url,
-                                    isOffscreenRendered,
                                     isTransparent,
-                                    context);
+                                    context,
+                                    renderType, browserWidth, browserHeight, cefRenderer);
   }
 
   public void destroyBrowser(CefBrowser browser) {
@@ -402,25 +406,29 @@ public class CefClient extends CefClientHandler implements CefContextMenuHandler
       return;
 
     browser.setFocus(false);
-    Container parent = browser.getUIComponent().getParent();
-    if (parent != null) {
-      FocusTraversalPolicy policy = null;
-      while (parent != null) {
-        policy = parent.getFocusTraversalPolicy();
-        if (policy != null)
-          break;
-        parent = parent.getParent();
-      }
-      if (policy != null) {
-        Component nextComp = next ? policy.getComponentAfter(parent, browser.getUIComponent())
-                                  : policy.getComponentBefore(parent, browser.getUIComponent());
-        if (nextComp == null) {
-          policy.getDefaultComponent(parent).requestFocus();
-        } else {
-          nextComp.requestFocus();
+
+    if (browser.getUIComponent()!=null) {
+        Container parent = browser.getUIComponent().getParent();
+        if (parent != null) {
+            FocusTraversalPolicy policy = null;
+            while (parent != null) {
+                policy = parent.getFocusTraversalPolicy();
+                if (policy != null)
+                    break;
+                parent = parent.getParent();
+            }
+            if (policy != null) {
+                Component nextComp = next ? policy.getComponentAfter(parent, browser.getUIComponent())
+                        : policy.getComponentBefore(parent, browser.getUIComponent());
+                if (nextComp == null) {
+                    policy.getDefaultComponent(parent).requestFocus();
+                } else {
+                    nextComp.requestFocus();
+                }
+            }
         }
-      }
     }
+
     if (focusHandler_ != null)
       focusHandler_.onTakeFocus(browser, next);
   }
@@ -433,7 +441,7 @@ public class CefClient extends CefClientHandler implements CefContextMenuHandler
     boolean alreadyHandled = false;
     if (focusHandler_ != null)
       alreadyHandled = focusHandler_.onSetFocus(browser, source);
-    if (!alreadyHandled)
+    if ((!alreadyHandled) && (browser.getUIComponent()!=null))
       browser.getUIComponent().requestFocus();
     return alreadyHandled;
   }
@@ -690,7 +698,10 @@ public class CefClient extends CefClientHandler implements CefContextMenuHandler
     CefRenderHandler realHandler = browser.getRenderHandler();
     if (realHandler != null)
       return realHandler.getViewRect(browser);
-    
+
+   if (browser.getUIComponent()==null)
+       return new Rectangle(0,0,0,0);
+
     Rectangle tmp = browser.getUIComponent().getBounds();
     if (OS.isMacintosh()) {
       Container parent = browser.getUIComponent().getParent();
@@ -710,7 +721,7 @@ public class CefClient extends CefClientHandler implements CefContextMenuHandler
 
   @Override
   public Point getScreenPoint(CefBrowser browser, Point viewPoint) {
-    if (browser == null)
+    if ((browser == null) || (browser.getUIComponent()==null))
       return new Point(0,0);
 
     CefRenderHandler realHandler = browser.getRenderHandler();

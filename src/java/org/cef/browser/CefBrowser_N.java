@@ -39,11 +39,11 @@ abstract class CefBrowser_N extends CefNativeAdapter implements CefBrowser {
     if (getNativeRef("CefBrowser") == 0 && !isPending_) {
       try {
         isPending_ = N_CreateBrowser(clientHandler,
-                                     windowHandle,
-                                     url,
-                                     transparent,
-                                     canvas,
-                                     context);
+          windowHandle,
+          url,
+          transparent,
+          canvas,
+          context);
       } catch (UnsatisfiedLinkError err) {
         err.printStackTrace();
       }
@@ -61,10 +61,10 @@ abstract class CefBrowser_N extends CefNativeAdapter implements CefBrowser {
     if (getNativeRef("CefBrowser") == 0 && !isPending_) {
       try {
         isPending_ = N_CreateDevTools(parent,
-                                      clientHandler,
-                                      windowHandle,
-                                      transparent,
-                                      canvas);
+          clientHandler,
+          windowHandle,
+          transparent,
+          canvas);
       } catch (UnsatisfiedLinkError err) {
         err.printStackTrace();
       }
@@ -152,7 +152,7 @@ abstract class CefBrowser_N extends CefNativeAdapter implements CefBrowser {
       N_ReloadIgnoreCache();
     } catch (UnsatisfiedLinkError ule) {
       ule.printStackTrace();
-    } 
+    }
   }
 
   @Override
@@ -368,16 +368,17 @@ abstract class CefBrowser_N extends CefNativeAdapter implements CefBrowser {
   protected final void parentWindowWillClose() {
     try {
       N_ParentWindowWillClose();
-    } catch(UnsatisfiedLinkError ule) {
+    } catch (UnsatisfiedLinkError ule) {
       ule.printStackTrace();
     }
   }
 
   /**
-  * Notify that the browser was resized.
-  * @param width The new width of the browser
-  * @param height The new height of the browser
-  */
+   * Notify that the browser was resized.
+   *
+   * @param width  The new width of the browser
+   * @param height The new height of the browser
+   */
   protected final void wasResized(int width, int height) {
     try {
       N_WasResized(width, height);
@@ -387,9 +388,10 @@ abstract class CefBrowser_N extends CefNativeAdapter implements CefBrowser {
   }
 
   /**
-  * Invalidate the specified rectangle.
-  * @param rect The rectangle to invalidate.
-  */
+   * Invalidate the specified rectangle.
+   *
+   * @param rect The rectangle to invalidate.
+   */
   protected final void invalidate(Rectangle rect) {
     try {
       N_Invalidate(rect);
@@ -399,9 +401,10 @@ abstract class CefBrowser_N extends CefNativeAdapter implements CefBrowser {
   }
 
   /**
-  * Send a key event.
-  * @param e The event to send.
-  */
+   * Send a key event.
+   *
+   * @param e The event to send.
+   */
   protected final void sendKeyEvent(KeyEvent e) {
     try {
       N_SendKeyEvent(e);
@@ -412,6 +415,7 @@ abstract class CefBrowser_N extends CefNativeAdapter implements CefBrowser {
 
   /**
    * Send a mouse event.
+   *
    * @param e The event to send.
    */
   protected final void sendMouseEvent(MouseEvent e) {
@@ -424,6 +428,7 @@ abstract class CefBrowser_N extends CefNativeAdapter implements CefBrowser {
 
   /**
    * Send a mouse wheel event.
+   *
    * @param e The event to send.
    */
   protected final void sendMouseWheelEvent(MouseWheelEvent e) {
@@ -440,45 +445,82 @@ abstract class CefBrowser_N extends CefNativeAdapter implements CefBrowser {
                                                boolean transparent,
                                                Canvas canvas,
                                                CefRequestContext context);
+
   private final native boolean N_CreateDevTools(CefBrowser parent,
                                                 CefClientHandler clientHandler,
                                                 long windowHandle,
                                                 boolean transparent,
                                                 Canvas canvas);
+
   private final native long N_GetWindowHandle(long surfaceHandle);
+
   private final native boolean N_CanGoBack();
+
   private final native void N_GoBack();
+
   private final native boolean N_CanGoForward();
+
   private final native void N_GoForward();
+
   private final native boolean N_IsLoading();
+
   private final native void N_Reload();
+
   private final native void N_ReloadIgnoreCache();
+
   private final native void N_StopLoad();
+
   private final native int N_GetIdentifier();
+
   private final native boolean N_IsPopup();
+
   private final native boolean N_HasDocument();
+
   private final native void N_ViewSource();
+
   private final native void N_GetSource(CefStringVisitor visitor);
+
   private final native void N_GetText(CefStringVisitor visitor);
+
   private final native void N_LoadRequest(CefRequest request);
+
   private final native void N_LoadURL(String url);
+
   private final native void N_LoadString(String val, String url);
+
   private final native void N_ExecuteJavaScript(String code, String url, int line);
+
   private final native String N_GetURL();
+
   private final native void N_ParentWindowWillClose();
+
   private final native void N_Close();
+
   private final native void N_SetFocus(boolean enable);
+
   private final native double N_GetZoomLevel();
+
   private final native void N_SetZoomLevel(double zoomLevel);
+
   private final native void N_RunFileDialog(FileDialogMode mode, String title, String defaultFileName, Vector<String> acceptTypes, CefRunFileDialogCallback callback);
+
   private final native void N_StartDownload(String url);
+
   private final native void N_Print();
+
   private final native void N_Find(int identifier, String searchText, boolean forward, boolean matchCase, boolean findNext);
+
   private final native void N_StopFinding(boolean clearSelection);
+
   private final native void N_CloseDevTools();
+
   private final native void N_WasResized(int width, int height);
+
   private final native void N_Invalidate(Rectangle rect);
+
   private final native void N_SendKeyEvent(KeyEvent e);
+
   private final native void N_SendMouseEvent(MouseEvent e);
+
   private final native void N_SendMouseWheelEvent(MouseWheelEvent e);
 }

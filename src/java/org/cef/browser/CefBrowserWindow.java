@@ -12,7 +12,7 @@ import java.awt.Canvas;
 public interface CefBrowserWindow {
   /**
    * Get the window handle for the given Canvas object.
-   * 
+   *
    * @param canvas an canvas object
    * @return a window pointer if any
    */

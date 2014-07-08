@@ -18,6 +18,7 @@ import org.cef.CefApp;
 import org.cef.CefClient;
 import org.cef.OS;
 import org.cef.browser.CefBrowser;
+import org.cef.browser.CefBrowserFactory;
 
 /**
  * This is a simple example application using JCEF.
@@ -31,13 +32,13 @@ import org.cef.browser.CefBrowser;
  * For a more feature complete example have also a look onto the example code
  * within the package "tests.detailed".
  */
-public class MainFrame extends JFrame {
+public class MainFrameOpenGL extends JFrame {
   private static final long serialVersionUID = -5570653778104813836L;
   private final JTextField address_;
   private final CefApp     cefApp_;
   private final CefClient  client_;
   private final CefBrowser browser_;
-  private final Component  browerUI_;
+  private final Component  browserUI_;
 
   /**
    * To display a simple browser window, it suffices completely to create an
@@ -46,7 +47,7 @@ public class MainFrame extends JFrame {
    * But to be more verbose, this CTOR keeps an instance of each object on the
    * way to the browser UI.
    */
-  private MainFrame(String startURL, boolean useOSR, boolean isTransparent) {
+  private MainFrameOpenGL(String startURL, boolean useOSR, boolean isTransparent) {
     // (1) The entry point to JCEF is always the class CefApp. There is only one
     //     instance per application and therefore you have to call the method
     //     "getInstance()" instead of a CTOR.
@@ -85,8 +86,10 @@ public class MainFrame extends JFrame {
     //     by calling the method "getUIComponent()" on the instance of CefBrowser.
     //     The UI component is inherited from a java.awt.Component and therefore
     //     it can be embedded into any AWT UI.
-    browser_ = client_.createBrowser(startURL, useOSR, isTransparent);
-    browerUI_ = browser_.getUIComponent();
+
+    browser_ = client_.createBrowser(startURL, isTransparent, CefBrowserFactory.RenderType.RENDER_OPENGL);
+
+    browserUI_ = browser_.getUIComponent();
 
     // (4) For this minimal browser, we need only a text field to enter an URL
     //     we want to navigate to and a CefBrowser window to display the content
@@ -106,7 +109,7 @@ public class MainFrame extends JFrame {
     // (5) All UI components are assigned to the default content pane of this
     //     JFrame and afterwards the frame is made visible to the user.
     getContentPane().add(address_, BorderLayout.NORTH);
-    getContentPane().add(browerUI_, BorderLayout.CENTER);
+    if (browserUI_!=null) getContentPane().add(browserUI_, BorderLayout.CENTER);
     pack();
     setSize(800,600);
     setVisible(true);
@@ -130,6 +133,6 @@ public class MainFrame extends JFrame {
     // supported yet. On Macintosh and Windows windowed rendering is used as
     // default. If you want to test OSR mode on those platforms, simply replace
     // "OS.isLinux()" with "true" and recompile.
-    new MainFrame("http://www.google.com", OS.isLinux(), false);
+    new MainFrameOpenGL("http://www.google.com", OS.isLinux(), false);
   }
 }
