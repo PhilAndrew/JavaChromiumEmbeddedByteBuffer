@@ -113,7 +113,7 @@ class TestCameraMotionPath2 extends SimpleApplication {
 
         // Copy the data across
         var pos: Int = 0
-        if (screenBuffer==null) screenBuffer = ByteBuffer.allocate(width * height * 4)
+        if (screenBuffer==null) screenBuffer = ByteBuffer.allocateDirect(width * height * 4)
         for (rect <- dirtyRects) {
           for (y <- rect.y until (rect.y + rect.height); x <- rect.x until (rect.x + rect.width)) {
             pos = x * 4 + (y * width * 4)
